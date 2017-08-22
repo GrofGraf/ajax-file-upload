@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>File Upload</title>
+  <style>
+    form{
+      -webkit-transition:opacity 500ms;
+      -moz-transition:opacity 500ms;
+      -o-transition:opacity 500ms;
+      -ms-transition:opacity 500ms;
+    }
+    form.fade{
+      position:absolute;
+      opacity:0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Upload File</h1>
+  <div style="position:relative">
+    <form name="form">
+      <div>
+        <input type="file" name="image">
+      </div>
+      <button type="button" name="submit">Submit</button>
+    </form>
+  </div>
+  <div id="server-response-container">
+  </div>
+  <script>
+
+    document.querySelector('input[name=image]').addEventListener('change', changeFile);
+    document.querySelector('button[name=submit]').addEventListener('click', uploadFile);
+    var data;
+
+    function changeFile(event){
+      var files = event.target.files;
+      data = new FormData();
+      var length = files.length;
+      for(var i = 0; i < length; i++){
+        var file = files[i];
+        data.append('image', file, file.name);
+      }
+    }
+
+    function uploadFile(){
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'upload.php', true);
+      xhr.send(data);
+      xhr.onload = function(){
+        if(xhr.status == 200){
+          document.querySelector('form').classList.add('fade');
+          document.querySelector('#server-response-container').innerHTML = xhr.responseText;
+        }else{
+          alert("There was an unexpected error while uploading the file.");
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
